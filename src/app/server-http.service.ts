@@ -10,23 +10,32 @@ export class ServerHttpService {
 
   private httpOptions = {
     headers: new HttpHeaders({
-      'Accept': 'text/html',
-      'Content-Type': 'text/plain; charset=utf-8'
+      'Content-Type': 'application/json',
+      'Cache-Control': 'no-cache',
+      Pragma: 'no-cache',
+      Expires: 'Sat, 01 Jan 2000 00:00:00 GMT',
+      // Authorization: 'my-auth-token',
+      // Authorization: 'Basic ' + btoa('username:password'),
     }),
   }
 
   private REST_API_SERVER = 'https://api.covid19api.com/';
 
-  constructor(private HttpClient: HttpClient) { }
+  constructor(private httpClient: HttpClient) { }
 
   public getAll() {
     const url = `${this.REST_API_SERVER}`;
-    return this.HttpClient.get<any>(url, this.httpOptions).pipe(catchError(this.handleError));
+    return this.httpClient.get<any>(url, this.httpOptions).pipe(catchError(this.handleError));
   }
 
   public getSummary() {
     const url = `${this.REST_API_SERVER}summary`;
-    return this.HttpClient.get<any>(url, this.httpOptions).pipe(catchError(this.handleError));
+    return this.httpClient.get<any>(url, this.httpOptions).pipe(catchError(this.handleError));
+  }
+
+  public getUSData() {
+    const url = `${this.REST_API_SERVER}live/country/US`;
+    return this.httpClient.get<any>(url, this.httpOptions).pipe(catchError(this.handleError));
   }
 
   private handleError(error: HttpErrorResponse) {

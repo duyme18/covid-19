@@ -1,45 +1,202 @@
-<h1 style="text-align: center;">Chương trình thông báo về Coronavirus - COVID-19</h1>
-
-<div>
-  <table id="data" style="border-collapse: collapse;">
-    <tr>
-      <th *ngFor="let data of globalData | keyvalue">
-        {{ data.key }}
-      </th>
-    </tr>
-    <tr>
-      <td *ngFor="let data of globalData | keyvalue">
-        {{ data.value }}
-      </td>
-    </tr>
-  </table>
-</div>
-<br />
-
-<div *ngIf="countriesData && countriesData.length > 0">
-  <table id="data" style="border-collapse: collapse;">
-    <tr>
-      <th *ngFor="let data of countriesData[0] | keyvalue" [hidden]="data.key === 'Premium'">
-        <span class="sorting">
-          <mat-icon style="cursor: pointer;" (click)="orderBy(data.key, 'asc')">
-            arrow_downward
+<div class="container">
+  <br />
+  <div>
+    <div>
+      <div style="display: block;" *ngIf="chartIsReady">
+        <canvas baseChart height="100vh" [datasets]="barChartData" [labels]="barChartLabels" [options]="barChartOptions"
+          [plugins]="barChartPlugins" [legend]="barChartLegend" [chartType]="barChartType" [colors]="chartColors">
+        </canvas>
+      </div>
+    </div>
+  </div>
+  <br />
+  <div>
+    <div *ngIf="interestedData && interestedData.length > 0">
+      <h1>Mỹ và Việt Nam</h1>
+      <table id="data" style="border-collapse: collapse;">
+        <tr>
+          <th>Country</th>
+          <th>New Confirmed</th>
+          <th>New Deaths</th>
+          <th>New Recovered</th>
+          <th>Total Confirmed</th>
+          <th>Total Deaths</th>
+          <th>Total Recovered</th>
+        </tr>
+        <tr *ngFor="let row of interestedData">
+          <td>
+            <mat-icon *ngIf="!isUSDataOpened && row.CountryCode === 'US'" title="Bấm vào để xem dữ liệu"
+              (click)="displayUSDataToggle()" style="cursor: pointer;">
+              expand_more
+            </mat-icon>
+            <mat-icon *ngIf="isUSDataOpened && row.CountryCode === 'US'" title="Bấm vào để che dữ liệu"
+              (click)="displayUSDataToggle()" style="cursor: pointer;">
+              expand_less
+            </mat-icon>
+            <span>{{ row.Country }}</span>
+          </td>
+          <td style="text-align: right;">
+            {{ row.NewConfirmed | number: "0.0" }}
+          </td>
+          <td style="text-align: right;">
+            {{ row.NewDeaths | number: "0.0" }}
+          </td>
+          <td style="text-align: right;">
+            {{ row.NewRecovered | number: "0.0" }}
+          </td>
+          <td style="text-align: right;">
+            {{ row.TotalConfirmed | number: "0.0" }}
+          </td>
+          <td style="text-align: right;">
+            {{ row.TotalDeaths | number: "0.0" }}
+          </td>
+          <td style="text-align: right;">
+            {{ row.TotalRecovered | number: "0.0" }}
+          </td>
+        </tr>
+      </table>
+      <table id="data" style="border-collapse: collapse;" *ngIf="isUSDataOpened">
+        <tr>
+          <th>
+            <mat-icon style="cursor: pointer;" (click)="orderUSDataBy('Province', 'asc')">
+              arrow_downward
+            </mat-icon>
+            <mat-icon style="cursor: pointer;" (click)="orderUSDataBy('Province', 'desc')">
+              arrow_upward
+            </mat-icon>
+            Province
+          </th>
+          <th>Date</th>
+          <th>
+            <mat-icon style="cursor: pointer;" (click)="orderUSDataBy('Confirmed', 'asc')">
+              arrow_downward
+            </mat-icon>
+            <mat-icon style="cursor: pointer;" (click)="orderUSDataBy('Confirmed', 'desc')">
+              arrow_upward
+            </mat-icon>
+            Confirmed
+          </th>
+          <th>
+            <mat-icon style="cursor: pointer;" (click)="orderUSDataBy('Deaths', 'asc')">
+              arrow_downward
+            </mat-icon>
+            <mat-icon style="cursor: pointer;" (click)="orderUSDataBy('Deaths', 'desc')">
+              arrow_upward
+            </mat-icon>
+            Deaths
+          </th>
+          <th>
+            <mat-icon style="cursor: pointer;" (click)="orderUSDataBy('Recovered', 'asc')">
+              arrow_downward
+            </mat-icon>
+            <mat-icon style="cursor: pointer;" (click)="orderUSDataBy('Recovered', 'desc')">
+              arrow_upward
+            </mat-icon>
+            Recovered
+          </th>
+          <th>
+            <mat-icon style="cursor: pointer;" (click)="orderUSDataBy('Active', 'asc')">
+              arrow_downward
+            </mat-icon>
+            <mat-icon style="cursor: pointer;" (click)="orderUSDataBy('Active', 'desc')">
+              arrow_upward
+            </mat-icon>
+            Active
+          </th>
+        </tr>
+        <tr *ngFor="let data of usData">
+          <td>
+            {{ data.Province }}
+          </td>
+          <td>
+            {{ data.Date | date: "shortDate" }}
+          </td>
+          <td style="text-align: right;">
+            {{ data.Confirmed | number: "0.0" }}
+          </td>
+          <td style="text-align: right;">
+            {{ data.Deaths | number: "0.0" }}
+          </td>
+          <td style="text-align: right;">
+            {{ data.Recovered | number: "0.0" }}
+          </td>
+          <td style="text-align: right;">
+            {{ data.Active | number: "0.0" }}
+          </td>
+        </tr>
+      </table>
+    </div>
+    <h1>Global</h1>
+    <table id="data" style="border-collapse: collapse;">
+      <tr>
+        <th *ngFor="let data of globalData | keyvalue">
+          {{ getWord(data.key) }}
+        </th>
+      </tr>
+      <tr>
+        <td *ngFor="let data of globalData | keyvalue" style="text-align: right;">
+          {{ data.value.toString() | number: "0.0" }}
+        </td>
+      </tr>
+    </table>
+  </div>
+  <br />
+  <div *ngIf="countriesData && countriesData.length > 0">
+    <span style="font-size: 38px;">Countries</span>&nbsp;
+    <span style="float: right; font-size: 30px;">
+      Số Countries trong đồ thị: &nbsp;
+      <select (change)="changingValue($event)">
+        <option *ngFor="let i of totalColumns" [selected]="i === currentTotalColumn">
+          {{ i }}
+        </option>
+      </select>
+    </span>
+    <table id="data" style="border-collapse: collapse;">
+      <tr>
+        <th style="text-align: center;">
+          <mat-icon *ngIf="!isDataOpened" title="Bấm vào để xem dữ liệu" (click)="displayDataToggle()"
+            style="cursor: pointer;">
+            expand_more
           </mat-icon>
-          <mat-icon style="cursor: pointer;" (click)="orderBy(data.key, 'desc')">
-            arrow_upward
+          <mat-icon *ngIf="isDataOpened" title="Bấm vào để che dữ liệu" (click)="displayDataToggle()"
+            style="cursor: pointer;">
+            expand_less
           </mat-icon>
-          <span>&nbsp;{{ data.key }}</span>
-        </span>
-      </th>
-    </tr>
-    <tr *ngFor="let row of countriesData">
-      <td *ngFor="let data of row | keyvalue" [hidden]="data.key === 'Premium'"
-        [style.text-align]="(+data.value).toString() === data.value.toString() ? 'right' : 'left'">
-        <span *ngIf="data.key === 'Date'">
-          {{ data.value.toString() | date : 'short'}}
-        </span>
-        <span *ngIf="data.key !== 'Date'">{{ (+data.value).toString() !== data.value.toString() ? data.value :
-          (data.value.toString() | number: '0.0') }}</span>
-      </td>
-    </tr>
-  </table>
+        </th>
+        <th *ngFor="let data of countriesData[0] | keyvalue">
+          <span class="sorting">
+            <mat-icon style="cursor: pointer;" (click)="orderBy(data.key, 'asc')">
+              arrow_downward
+            </mat-icon>
+            <mat-icon style="cursor: pointer;" (click)="orderBy(data.key, 'desc')">
+              arrow_upward
+            </mat-icon>
+            <span>&nbsp;{{ getWord(data.key) }}</span>
+          </span>
+        </th>
+      </tr>
+      <tr *ngFor="let row of countriesData; let i = index" [ngClass]="{
+          'div-summary-close': !isDataOpened,
+          'div-summary-open': isDataOpened
+        }">
+        <td style="text-align: right;">{{ i + 1 }}</td>
+        <td *ngFor="let data of row | keyvalue" [style.text-align]="
+            (+data.value).toString() === data.value.toString()
+              ? 'right'
+              : 'left'
+          ">
+          <span *ngIf="data.key === 'Date'">
+            {{ data.value.toString() | date: "shortDate" }}
+          </span>
+          <span *ngIf="data.key !== 'Date'">
+            {{
+            (+data.value).toString() !== data.value.toString()
+            ? data.value
+            : (data.value.toString() | number: "0.0")
+            }}
+          </span>
+        </td>
+      </tr>
+    </table>
+  </div>
 </div>
