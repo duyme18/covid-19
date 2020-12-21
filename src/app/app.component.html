@@ -20,7 +20,15 @@
   <table id="data" style="border-collapse: collapse;">
     <tr>
       <th *ngFor="let data of countriesData[0] | keyvalue" [hidden]="data.key === 'Premium'">
-        {{ data.key }}
+        <span class="sorting">
+          <mat-icon style="cursor: pointer;" (click)="orderBy(data.key, 'asc')">
+            arrow_downward
+          </mat-icon>
+          <mat-icon style="cursor: pointer;" (click)="orderBy(data.key, 'desc')">
+            arrow_upward
+          </mat-icon>
+          <span>&nbsp;{{ data.key }}</span>
+        </span>
       </th>
     </tr>
     <tr *ngFor="let row of countriesData">
