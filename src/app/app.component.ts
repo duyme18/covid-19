@@ -5,7 +5,6 @@ import { ChartOptions, ChartType, ChartDataSets, Chart} from 'chart.js';
 import { Label as ng2Chart } from 'ng2-charts';
 import * as pluginDataLabels from 'chartjs-plugin-datalabels';
 import * as ChartAnnotation from 'chartjs-plugin-annotation';
-import { environment } from './../environments/environment';
 
 
 @Component({
@@ -106,8 +105,7 @@ export class AppComponent {
       borderColor: 'rgba(255, 26, 26, 0.86)',
     },
   ];
-  constructor(private serverHttp: ServerHttpService) { 
-  }
+  constructor(private serverHttp: ServerHttpService) { }
 
   ngOnInit(): void {
     Chart.pluginService.register(ChartAnnotation);
