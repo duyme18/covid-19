@@ -31,7 +31,7 @@ export class AppComponent {
     responsive: true,
     // We use these empty structures as placeholders for dynamic theming.
     title: {
-      text: 'LIVE - Chương trình thông báo về Coronavirus - Covid 19',
+      text: 'LIVE - Chương trình thông báo về Virus Corona - COVID-19',
       display: true,
       fontSize: 40,
     },
