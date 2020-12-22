@@ -1,9 +1,12 @@
 import { Component } from '@angular/core';
 import { ServerHttpService } from './server-http.service';
 import * as _ from 'lodash';
-import { ChartOptions, ChartType, ChartDataSets } from 'chart.js';
+import { ChartOptions, ChartType, ChartDataSets, Chart} from 'chart.js';
 import { Label as ng2Chart } from 'ng2-charts';
 import * as pluginDataLabels from 'chartjs-plugin-datalabels';
+import * as ChartAnnotation from 'chartjs-plugin-annotation';
+import { environment } from './../environments/environment';
+
 
 @Component({
   selector: 'covid19-root',
@@ -16,14 +19,14 @@ export class AppComponent {
   public countriesData: string[] = [];
   public isDataOpened = false;
   public isUSDataOpened = false;
-  public usData = [];
+  public usData:any[] = [];
   public chartIsReady = false;
   private chartOptions = {
     responsive: true,
   };
   public totalColumns = [2, 3, 4, 5, 6, 7, 8, 9, 10];
   public currentTotalColumn = 5;
-  public interestedData = [];
+  public interestedData:any = [];
 
   public barChartOptions: ChartOptions = {
     responsive: true,
@@ -64,7 +67,7 @@ export class AppComponent {
   ];
   public barChartType: ChartType = 'bar';
   public barChartLegend = true;
-  public barChartPlugins = [pluginDataLabels];
+  public barChartPlugins = [];
 
   public barChartData: ChartDataSets[] = [
     { data: [65, 59, 80, 81, 56, 55, 40], label: 'Series A' },
@@ -103,15 +106,17 @@ export class AppComponent {
       borderColor: 'rgba(255, 26, 26, 0.86)',
     },
   ];
-  constructor(private serverHttp: ServerHttpService) { }
+  constructor(private serverHttp: ServerHttpService) { 
+  }
 
   ngOnInit(): void {
+    Chart.pluginService.register(ChartAnnotation);
     this.serverHttp.getSummary().subscribe((data) => {
       // console.log(data);
       this.globalData = data.Global;
       this.countriesData = [];
       for (const row of data.Countries) {
-        const filteredData = {
+        const filteredData: any = {
           Country: row.Country,
           CountryCode: row.CountryCode,
           NewConfirmed: row.NewConfirmed,
@@ -120,7 +125,7 @@ export class AppComponent {
           TotalConfirmed: row.TotalConfirmed,
           TotalDeaths: row.TotalDeaths,
           TotalRecovered: row.TotalRecovered,
-        } as never;
+        };
         if (row.CountryCode === 'US') {
           this.interestedData.push(filteredData);
         }
@@ -176,7 +181,7 @@ export class AppComponent {
       'TotalRecovered',
       'NewDeaths',
       'TotalDeaths'
-    ] as never;
+    ] ;
     const countriesData: any[] = [];
     let records = 0;
     this.barChartLabels = [];
