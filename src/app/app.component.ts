@@ -3,7 +3,7 @@ import { ServerHttpService } from './server-http.service';
 import * as _ from 'lodash';
 import { ChartOptions, ChartType, ChartDataSets, Chart} from 'chart.js';
 import { Label as ng2Chart } from 'ng2-charts';
-import * as pluginDataLabels from 'chartjs-plugin-datalabels';
+import ChartDataLabels from 'chartjs-plugin-datalabels';
 import * as ChartAnnotation from 'chartjs-plugin-annotation';
 
 
@@ -66,7 +66,7 @@ export class AppComponent {
   ];
   public barChartType: ChartType = 'bar';
   public barChartLegend = true;
-  public barChartPlugins = [];
+  public barChartPlugins = [ChartDataLabels];
 
   public barChartData: ChartDataSets[] = [
     { data: [65, 59, 80, 81, 56, 55, 40], label: 'Series A' },
@@ -108,6 +108,7 @@ export class AppComponent {
   constructor(private serverHttp: ServerHttpService) { }
 
   ngOnInit(): void {
+    Chart.plugins.unregister(ChartDataLabels);
     Chart.pluginService.register(ChartAnnotation);
     this.serverHttp.getSummary().subscribe((data) => {
       // console.log(data);
